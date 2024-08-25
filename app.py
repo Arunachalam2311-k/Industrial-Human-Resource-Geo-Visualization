@@ -98,13 +98,6 @@ elif selected == "Overview":
     fig3 = px.box(top_10_df, x='NIC Name', y=column_total, title=f'{worker_type} by Top 10 NIC Names')
     st.plotly_chart(fig3)
 
-    # Count plot for a categorical column
-    st.subheader(f"Distribution of {worker_type} by India/States")
-    sns.set_palette("bright")
-    fig, ax = plt.subplots()
-    sns.countplot(x='India/States', data=df, ax=ax)
-    plt.xticks(rotation=90)
-    st.pyplot(fig)
 
     # Plot: Relationship between Rural/Urban and Total Persons
     st.subheader(f'Relationship between {worker_type} - Rural/Urban - Persons and {worker_type} - Total - Persons')
@@ -117,6 +110,42 @@ elif selected == "Overview":
     ax.legend()
     ax.grid(True)
     st.pyplot(fig)
+
+    # Select box for gender type (worker type)
+    gender_type = st.selectbox('Select Gender Type', ['Main Workers', 'Marginal Workers'])
+
+    # Column mapping based on selected gender type
+    if gender_type == 'Main Workers':
+        column_total = 'Main Workers - Total -  Persons'
+        column_males = 'Main Workers - Total - Males'
+        column_females = 'Main Workers - Total - Females'
+    else:
+        column_total = 'Marginal Workers - Total -  Persons'
+        column_males = 'Marginal Workers - Total - Males'
+        column_females = 'Marginal Workers - Total - Females'
+
+    # Create a DataFrame for the bar plot
+    bar_data = {
+        'Category': ['Total Persons', 'Males', 'Females'],
+        'Count': [
+            df[column_total].sum(),
+            df[column_males].sum(),
+            df[column_females].sum()
+        ]
+    }
+    bar_df = pd.DataFrame(bar_data)
+
+    # Create the bar plot
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x='Category', y='Count', data=bar_df, palette='viridis')
+    plt.title(f'Distribution of {gender_type}')
+    plt.xlabel('Category')
+    plt.ylabel('Count')
+    plt.xticks(rotation=45)
+    plt.grid(axis='y')
+
+    # Display the plot in Streamlit
+    st.pyplot(plt)
 
 # ---------------------------------------------------------------------------------------------------------------
 # Explore Page
